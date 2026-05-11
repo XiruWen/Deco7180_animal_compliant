@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>WildSafe — Brisbane Wildlife Guide</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Sora:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
+  
+<style>
+/* ═══════════════════════════════════════════════
+   WILDSAFE — MAIN STYLESHEET
+   Aesthetic: Organic dark luxury with warm earth tones
+   Mobile-first, full-bleed immersive
+════════════════════════════════════════════════ */
+
+:root {
+  --forest: #1a2e1f;
+  --forest-mid: #243428;
+  --forest-light: #2e4335;
+  --sage: #4a7c59;
+  --sage-light: #6aab7c;
+  --lime: #a8d96b;
+  --cream: #f5f0e4;
+  --warm-white: #faf7f0;
+  --amber: #e8a83a;
+  --amber-light: #f5c842;
+  --red-alert: #e63946;
+  --red-soft: #ff6b6b;
+  --text-primary: #1a1a15;
+  --text-mid: #4a4a3a;
+  --text-light: #8a8a72;
+  --text-on-dark: #e8e4d8;
+  --card-bg: #ffffff;
+  --card-border: rgba(0,0,0,0.07);
+  --shadow-soft: 0 4px 24px rgba(0,0,0,0.08);
+  --shadow-card: 0 2px 12px rgba(0,0,0,0.10);
+  --shadow-float: 0 12px 40px rgba(0,0,0,0.18);
+  --radius: 18px;
+  --radius-sm: 10px;
+  --nav-h: 72px;
+  --header-h: 60px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html { font-size: 16px; }
+
+body {
+  font-family: 'Sora', system-ui, sans-serif;
+  background: var(--cream);
+  color: var(--text-primary);
+  overflow: hidden;
+  height: 100dvh;
+  width: 100vw;
+  position: relative;
+}
+
+/* ── PAGE SYSTEM ────────────────────────────── */
+.page {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  padding-bottom: var(--nav-h);
+}
+.page.active {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+
+/* ── HIDDEN ─────────────────────────────────── */
+.hidden { display: none !important; }
+
+/* ══════════════════════════════════════════════
+   HOME / HERO
+══════════════════════════════════════════════ */
+#page-home {
+  background: var(--forest);
+  color: var(--text-on-dark);
+}
+
+.hero-bg {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+}
+.orb1 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, #4a7c59, transparent);
+  top: -100px; right: -100px;
+  animation: orbFloat 8s ease-in-out infinite;
+}
+.orb2 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, #e8a83a, transparent);
+  bottom: 200px; left: -80px;
+  animation: orbFloat 11s ease-in-out infinite reverse;
+}
+.orb3 {
+  width: 250px; height: 250px;
+  background: radial-gradient(circle, #a8d96b, transparent);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation: orbFloat 14s ease-in-out infinite;
+}
+.hero-grain {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.5;
+}
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  33% { transform: translate(20px, -30px) scale(1.05); }
+  66% { transform: translate(-15px, 15px) scale(0.97); }
+}
+
+.home-header {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; gap: 10px;
+  padding: 52px 24px 0;
+}
+.logo-mark { font-size: 28px; }
+.logo-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+.logo-sub {
+  font-size: 11px; font-weight: 500;
+  color: var(--sage-light);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-left: 2px;
+  margin-top: 4px;
+}
+
+.hero-content {
+  position: relative; z-index: 2;
+  padding: 28px 24px 0;
+}
+.hero-eyebrow {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--sage-light);
+  margin-bottom: 12px;
+}
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(42px, 12vw, 58px);
+  font-weight: 900;
+  line-height: 1.05;
+  color: #fff;
+  margin-bottom: 16px;
+}
+.hero-title em {
+  font-style: italic;
+  color: var(--lime);
+}
+.hero-desc {
+  font-size: 14px;
+  color: rgba(232,228,216,0.7);
+  line-height: 1.65;
+  max-width: 340px;
+  margin-bottom: 28px;
+}
+
+/* Feature pills */
+.feature-pills {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.pill {
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 100px;
+  padding: 8px 14px;
+  color: var(--text-on-dark);
+  font-family: 'Sora', sans-serif;
+  font-size: 12px; font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  backdrop-filter: blur(8px);
+}
+.pill:hover, .pill:active { background: rgba(255,255,255,0.2); transform: scale(0.97); }
+.pill-icon { font-size: 14px; }
+.pill-sos {
+  background: rgba(230,57,70,0.3);
+  border-color: rgba(230,57,70,0.5);
+}
+
+/* Feature cards */
+.feature-cards-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.fcard {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius);
+  padding: 18px 16px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+}
+.fcard:hover, .fcard:active { background: rgba(255,255,255,0.13); transform: scale(0.98); }
+.fcard-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--sage-light);
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+.fcard-icon { font-size: 24px; margin-bottom: 8px; }
+.fcard-title {
+  font-size: 13px; font-weight: 600;
+  color: #fff; margin-bottom: 4px;
+}
+.fcard-desc { font-size: 11px; color: rgba(232,228,216,0.6); line-height: 1.5; }
+.fcard-arrow {
+  position: absolute; bottom: 14px; right: 14px;
+  font-size: 16px; color: var(--sage-light);
+  transition: transform 0.2s;
+}
+.fcard:hover .fcard-arrow { transform: translateX(3px); }
+.fcard-sos { background: rgba(230,57,70,0.15); border-color: rgba(230,57,70,0.3); }
+
+.data-banner {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+  background: rgba(168,217,107,0.1);
+  border: 1px solid rgba(168,217,107,0.25);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 11px; color: rgba(232,228,216,0.7);
+  margin-bottom: 100px;
+}
+.data-badge {
+  background: var(--lime);
+  color: var(--forest);
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 3px 7px; border-radius: 4px;
+}
+.data-dot { color: var(--sage-light); }
+.data-n { color: var(--lime); font-weight: 500; }
+
+/* ══════════════════════════════════════════════
+   PAGE HEADER (shared)
+══════════════════════════════════════════════ */
+.page-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 52px 20px 16px;
+  background: var(--warm-white);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  position: sticky; top: 0; z-index: 50;
+}
+.back-btn {
+  background: none; border: 1.5px solid rgba(0,0,0,0.12);
+  border-radius: 100px;
+  padding: 6px 14px;
+  font-family: 'Sora', sans-serif;
+  font-size: 13px; font-weight: 500;
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.back-btn:hover { background: rgba(0,0,0,0.05); }
+.page-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px; font-weight: 700;
+  flex: 1;
+}
+.header-badge {
+  background: var(--lime);
+  color: var(--forest);
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 4px 9px; border-radius: 100px;
+}
+
+/* ══════════════════════════════════════════════
+   MAP PAGE
+══════════════════════════════════════════════ */
+.map-controls {
+  background: var(--warm-white);
+  padding: 10px 0 10px 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.filter-scroll {
+  display: flex; gap: 8px;
+  overflow-x: auto; padding-right: 16px;
+  scrollbar-width: none;
+}
+.filter-scroll::-webkit-scrollbar { display: none; }
+.filter-btn {
+  background: none;
+  border: 1.5px solid rgba(0,0,0,0.12);
+  border-radius: 100px;
+  padding: 7px 14px;
+  font-family: 'Sora', sans-serif;
+  font-size: 12px; font-weight: 500;
+  color: var(--text-mid);
+  white-space: nowrap; cursor: pointer;
+  transition: all 0.15s;
+}
+.filter-btn.active {
+  background: var(--forest);
+  border-color: var(--forest);
+  color: #fff;
+}
+
+#map-container {
+  width: 100%; height: 340px;
+  z-index: 1;
+  position: relative;
+}
+
+.map-legend {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 20px;
+  background: var(--warm-white);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  font-size: 11px; color: var(--text-mid);
+}
+.legend-title { font-weight: 600; margin-right: 4px; }
+.legend-items { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.legend-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  display: inline-block; margin-right: 2px;
+}
+
+.map-insight-card {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: #fff8e8;
+  border-left: 4px solid var(--amber);
+  margin: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+}
+.insight-icon { font-size: 20px; flex-shrink: 0; }
+.insight-text { font-size: 12px; color: var(--text-mid); line-height: 1.6; }
+.cite-link {
+  color: var(--sage); text-decoration: underline;
+  font-weight: 500;
+}
+
+.suburb-stats { padding: 0 16px 20px; }
+.stat-title {
+  font-size: 13px; font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+#suburb-list { display: flex; flex-direction: column; gap: 8px; }
+.suburb-row {
+  display: flex; align-items: center; gap: 10px;
+  background: #fff;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-card);
+}
+.suburb-name { flex: 1; font-size: 13px; font-weight: 500; }
+.suburb-bar-wrap {
+  flex: 2; background: #f0ede5; border-radius: 4px; height: 6px; overflow: hidden;
+}
+.suburb-bar { height: 100%; border-radius: 4px; background: var(--sage); }
+.suburb-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; color: var(--text-light);
+  min-width: 28px; text-align: right;
+}
+
+/* ══════════════════════════════════════════════
+   IDENTIFY PAGE
+══════════════════════════════════════════════ */
+#page-identify { background: var(--warm-white); }
+
+.identify-hero { padding: 20px 16px; }
+
+.upload-zone {
+  background: #fff;
+  border: 2.5px dashed #c8c4b4;
+  border-radius: var(--radius);
+  min-height: 200px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 14px;
+}
+.upload-zone:hover { border-color: var(--sage); background: #f8fff8; }
+.upload-zone.drag-over { border-color: var(--lime); background: #f0ffe8; }
+.upload-inner { text-align: center; padding: 32px 20px; }
+.upload-icon { font-size: 48px; margin-bottom: 12px; }
+.upload-title { font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+.upload-sub { font-size: 12px; color: var(--text-light); }
+.preview-img {
+  width: 100%; height: 100%; object-fit: cover;
+  position: absolute; inset: 0;
+}
+
+.identify-btn {
+  width: 100%;
+  background: var(--forest);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  font-family: 'Sora', sans-serif;
+  font-size: 15px; font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+.identify-btn:hover { background: var(--forest-light); }
+.identify-btn:active { transform: scale(0.98); }
+.identify-btn.loading { background: var(--sage); }
+
+.id-result {
+  background: #fff;
+  border-radius: var(--radius);
+  margin: 0 16px 20px;
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+  border-left: 5px solid var(--sage);
+}
+.id-result-animal { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.id-result-sci { font-size: 12px; font-style: italic; color: var(--text-light); margin-bottom: 10px; }
+.id-result-body { font-size: 13px; color: var(--text-mid); line-height: 1.6; }
+.id-danger-badge {
+  display: inline-block;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 4px;
+  margin-top: 8px;
+}
+.badge-low { background: #e8f8e8; color: #2a7a2a; }
+.badge-med { background: #fff3e0; color: #b06000; }
+.badge-high { background: #ffe8e8; color: #c02020; }
+
+.edu-section { padding: 0 16px 20px; }
+.edu-title {
+  font-size: 14px; font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+.animal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.animal-card {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.animal-card:hover, .animal-card:active { transform: scale(0.97); box-shadow: var(--shadow-soft); }
+.animal-emoji { font-size: 32px; margin-bottom: 8px; }
+.animal-name { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; }
+.animal-danger {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.danger-low { color: #2a7a2a; }
+.danger-med { color: #b06000; }
+.danger-high { color: #c02020; }
+.animal-tip { font-size: 11px; color: var(--text-light); margin-top: 4px; line-height: 1.4; }
+
+/* Animal detail modal */
+.animal-modal {
+  position: fixed; inset: 0; z-index: 999;
+  background: rgba(20,30,20,0.7);
+  display: flex; align-items: flex-end;
+  backdrop-filter: blur(4px);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s;
+}
+.animal-modal.open { opacity: 1; pointer-events: all; }
+.animal-modal-card {
+  background: var(--warm-white);
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  padding: 24px 24px 40px;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+  max-height: 85vh; overflow-y: auto;
+}
+.animal-modal.open .animal-modal-card { transform: translateY(0); }
+.modal-handle {
+  width: 40px; height: 4px; background: #d0ccc0;
+  border-radius: 2px; margin: 0 auto 20px; 
+}
+.modal-emoji { font-size: 56px; margin-bottom: 12px; }
+.modal-name { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; margin-bottom: 2px; }
+.modal-sci { font-size: 13px; font-style: italic; color: var(--text-light); margin-bottom: 16px; }
+.modal-section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-light); margin-bottom: 6px; margin-top: 16px; }
+.modal-body { font-size: 14px; color: var(--text-mid); line-height: 1.65; }
+.modal-close { float: right; background: none; border: 1.5px solid #d0ccc0; border-radius: 100px; padding: 5px 14px; font-family: 'Sora', sans-serif; font-size: 13px; cursor: pointer; }
+
+/* ══════════════════════════════════════════════
+   DETERRENT PAGE
+══════════════════════════════════════════════ */
+#page-deter { background: var(--forest); color: var(--text-on-dark); }
+#page-deter .page-header {
+  background: var(--forest-mid);
+  border-bottom-color: rgba(255,255,255,0.08);
+  color: var(--text-on-dark);
+}
+#page-deter .page-title { color: #fff; }
+#page-deter .back-btn { border-color: rgba(255,255,255,0.2); color: rgba(232,228,216,0.7); }
+
+.deter-hero {
+  padding: 24px 20px 16px;
+  text-align: center;
+}
+.deter-caption {
+  font-size: 13px; color: rgba(232,228,216,0.65);
+  max-width: 280px; margin: 0 auto 12px;
+  line-height: 1.5;
+}
+.cite-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 100px;
+  padding: 7px 14px;
+  font-size: 11px; color: rgba(232,228,216,0.6);
+}
+
+/* soundwave */
+.soundwave-viz {
+  display: flex; align-items: center; justify-content: center;
+  gap: 3px; height: 60px; margin-bottom: 16px;
+}
+.sw-bar {
+  width: 4px; border-radius: 2px;
+  background: var(--lime);
+  opacity: 0.7;
+  animation: swAnim 1.2s ease-in-out infinite;
+}
+@keyframes swAnim {
+  0%, 100% { transform: scaleY(0.3); opacity: 0.4; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+
+.deter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 0 16px 16px;
+}
+.deter-card {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius);
+  padding: 18px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  position: relative;
+}
+.deter-card:hover, .deter-card:active { background: rgba(255,255,255,0.14); transform: scale(0.97); }
+.deter-card.playing {
+  background: rgba(168,217,107,0.15);
+  border-color: var(--lime);
+}
+.deter-card-emoji { font-size: 36px; margin-bottom: 10px; }
+.deter-card-name { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+.deter-card-desc { font-size: 11px; color: rgba(232,228,216,0.55); line-height: 1.4; }
+.deter-play-btn {
+  margin-top: 12px;
+  background: var(--sage);
+  border: none; border-radius: 100px;
+  padding: 8px 18px;
+  color: #fff;
+  font-family: 'Sora', sans-serif;
+  font-size: 12px; font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.deter-card.playing .deter-play-btn { background: var(--red-soft); }
+.deter-effectiveness {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--lime); margin-top: 6px;
+}
+
+.volume-control {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 20px;
+  background: rgba(255,255,255,0.05);
+  border-radius: var(--radius-sm);
+  margin: 0 16px 16px;
+}
+.vol-label { font-size: 18px; }
+.vol-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 4px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  outline: none;
+}
+.vol-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px; height: 20px;
+  background: var(--lime);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.deter-tip {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: rgba(232,168,58,0.15);
+  border: 1px solid rgba(232,168,58,0.3);
+  border-radius: var(--radius-sm);
+  margin: 0 16px 20px;
+  padding: 14px 16px;
+  font-size: 12px; color: rgba(232,228,216,0.75);
+  line-height: 1.6;
+}
+.tip-icon { font-size: 20px; flex-shrink: 0; }
+
+/* ══════════════════════════════════════════════
+   SOS PAGE
+══════════════════════════════════════════════ */
+#page-sos { background: #1a0a08; color: var(--text-on-dark); }
+
+.sos-header {
+  padding: 52px 20px 20px;
+  background: linear-gradient(135deg, #2d0d08, #1a0a08);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.back-btn-light { border-color: rgba(255,255,255,0.2); color: rgba(232,228,216,0.7); }
+.sos-badge {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--red-soft);
+  margin-bottom: 6px;
+}
+.sos-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px; font-weight: 900;
+  color: #fff;
+}
+
+.sos-tabs {
+  display: flex; gap: 0;
+  background: rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.sos-tab {
+  flex: 1;
+  background: none; border: none;
+  padding: 14px 8px;
+  font-family: 'Sora', sans-serif;
+  font-size: 12px; font-weight: 500;
+  color: rgba(232,228,216,0.5);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+.sos-tab.active {
+  color: #fff;
+  border-bottom-color: var(--red-soft);
+}
+
+.sos-section { display: none; padding: 20px 16px 0; }
+.sos-section.active { display: block; }
+
+.sos-urgent {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(230,57,70,0.2);
+  border: 1px solid rgba(230,57,70,0.4);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 13px; font-weight: 500;
+  color: var(--red-soft);
+  margin-bottom: 20px;
+}
+.urgent-icon { font-size: 20px; flex-shrink: 0; }
+
+.steps-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.step-card {
+  display: flex; gap: 14px; align-items: flex-start;
+  background: rgba(255,255,255,0.07);
+  border-radius: var(--radius);
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.step-num {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--red-alert);
+  color: #fff;
+  font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  font-family: 'DM Mono', monospace;
+}
+.step-body { flex: 1; }
+.step-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+.step-desc { font-size: 12px; color: rgba(232,228,216,0.65); line-height: 1.55; }
+.step-time {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--red-soft);
+  font-weight: 500; margin-top: 6px;
+}
+
+/* Hospital */
+.hospital-intro {
+  display: flex; gap: 14px; align-items: flex-start;
+  background: rgba(255,255,255,0.07);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.hospital-icon { font-size: 32px; flex-shrink: 0; }
+.hospital-intro-title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+.hospital-intro-sub { font-size: 12px; color: rgba(232,228,216,0.6); line-height: 1.5; }
+.hospital-cards { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.hosp-card {
+  background: rgba(255,255,255,0.07);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.hosp-name { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+.hosp-meta { font-size: 11px; color: rgba(232,228,216,0.55); margin-bottom: 8px; }
+.hosp-distance {
+  display: inline-block;
+  background: rgba(168,217,107,0.2);
+  color: var(--lime);
+  font-size: 10px; font-weight: 600;
+  padding: 3px 9px; border-radius: 4px;
+}
+.call-hosp-btn {
+  display: inline-block;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 100px;
+  padding: 6px 14px;
+  font-family: 'Sora', sans-serif;
+  font-size: 12px; color: #fff;
+  text-decoration: none; margin-left: 8px;
+  cursor: pointer;
+}
+
+.what-to-bring { margin-bottom: 20px; }
+.wtb-title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 10px; }
+.wtb-list { display: flex; flex-direction: column; gap: 8px; }
+.wtb-item {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(255,255,255,0.05);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 13px; color: rgba(232,228,216,0.8);
+}
+
+/* Insurance */
+.ins-steps { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+.ins-step {
+  background: rgba(255,255,255,0.07);
+  border-radius: var(--radius);
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-left: 4px solid var(--amber);
+}
+.ins-step-title { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 6px; }
+.ins-step-body { font-size: 12px; color: rgba(232,228,216,0.65); line-height: 1.6; }
+
+/* Emergency calls */
+.sos-callout {
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 16px;
+  margin-bottom: 80px;
+}
+.call-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  background: var(--red-alert);
+  color: #fff; text-decoration: none;
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  font-size: 15px; font-weight: 700;
+  font-family: 'Sora', sans-serif;
+  transition: background 0.15s;
+}
+.call-btn:hover { background: #c02535; }
+.call-btn-secondary {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(232,228,216,0.85);
+}
+.call-btn-secondary:hover { background: rgba(255,255,255,0.18); }
+.call-icon { font-size: 20px; }
+
+/* ══════════════════════════════════════════════
+   BOTTOM NAV
+══════════════════════════════════════════════ */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  z-index: 200;
+  background: rgba(250,247,240,0.95);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(0,0,0,0.08);
+  display: flex;
+  height: var(--nav-h);
+  padding: 0 4px;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.nav-item {
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px;
+  background: none; border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-radius: var(--radius-sm);
+  margin: 6px 2px;
+}
+.nav-item:hover { background: rgba(0,0,0,0.05); }
+.nav-item.active .nav-icon { filter: none; transform: scale(1.15); }
+.nav-item.active .nav-label { color: var(--forest); font-weight: 600; }
+.nav-icon { font-size: 22px; transition: transform 0.15s; }
+.nav-label {
+  font-size: 10px; font-weight: 500;
+  color: var(--text-light);
+  letter-spacing: 0.02em;
+  font-family: 'Sora', sans-serif;
+}
+.nav-item-sos .nav-icon {
+  background: var(--red-alert);
+  border-radius: 50%;
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 4px 12px rgba(230,57,70,0.4);
+}
+.nav-item-sos.active .nav-icon { transform: scale(1.05); }
+.nav-item-sos .nav-label { color: var(--red-alert); font-weight: 600; }
+
+/* ══════════════════════════════════════════════
+   LEAFLET OVERRIDES
+══════════════════════════════════════════════ */
+.leaflet-popup-content-wrapper {
+  border-radius: var(--radius-sm) !important;
+  box-shadow: var(--shadow-float) !important;
+  font-family: 'Sora', sans-serif !important;
+}
+.leaflet-popup-content {
+  margin: 12px 16px !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE / DESKTOP
+══════════════════════════════════════════════ */
+@media (min-width: 480px) {
+  .page { max-width: 430px; left: 50%; transform: translateX(-50%) translateY(20px); }
+  .page.active { transform: translateX(-50%) translateY(0); }
+  .bottom-nav { max-width: 430px; left: 50%; transform: translateX(-50%); border-radius: var(--radius) var(--radius) 0 0; border: 1px solid rgba(0,0,0,0.08); }
+  .hero-bg { display: none; }
+  #page-home { background: var(--forest); }
+  body { background: #0e1610; }
+  .animal-modal { max-width: 430px; left: 50%; transform: translateX(-50%); }
+}
+
+@media (min-width: 768px) {
+  .feature-cards-row { grid-template-columns: 1fr 1fr 1fr 1fr; }
+}
+
+/* Scroll enhancements */
+.page { scroll-behavior: smooth; }
+
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     SPLASH / HERO
+════════════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+
+  <div class="hero-bg">
+    <div class="hero-orb orb1"></div>
+    <div class="hero-orb orb2"></div>
+    <div class="hero-orb orb3"></div>
+    <div class="hero-grain"></div>
+  </div>
+
+  <header class="home-header">
+    <div class="logo-mark">🐨</div>
+    <span class="logo-text">WildSafe</span>
+    <span class="logo-sub">Brisbane</span>
+  </header>
+
+  <main class="hero-content">
+    <div class="hero-eyebrow">Urban Wildlife Companion</div>
+    <h1 class="hero-title">Stay safe.<br/><em>Stay aware.</em></h1>
+    <p class="hero-desc">
+      Powered by Brisbane's open animal complaint dataset —
+      your intelligent guide to encountering, avoiding, and recovering from urban wildlife incidents.
+    </p>
+
+    <div class="feature-pills">
+      <button class="pill" onclick="nav('map')">
+        <span class="pill-icon">📍</span>
+        <span>Hotspot Map</span>
+      </button>
+      <button class="pill" onclick="nav('identify')">
+        <span class="pill-icon">🔍</span>
+        <span>Identify Animal</span>
+      </button>
+      <button class="pill" onclick="nav('deter')">
+        <span class="pill-icon">🔊</span>
+        <span>Deter &amp; Scare</span>
+      </button>
+      <button class="pill pill-sos" onclick="nav('sos')">
+        <span class="pill-icon">🩹</span>
+        <span>After Attack</span>
+      </button>
+    </div>
+
+    <div class="feature-cards-row">
+      <div class="fcard" onclick="nav('map')">
+        <div class="fcard-num">01</div>
+        <div class="fcard-icon">🗺️</div>
+        <div class="fcard-title">Hotspot Map</div>
+        <div class="fcard-desc">See where animal complaints cluster across Brisbane suburbs</div>
+        <div class="fcard-arrow">→</div>
+      </div>
+      <div class="fcard" onclick="nav('identify')">
+        <div class="fcard-num">02</div>
+        <div class="fcard-icon">📷</div>
+        <div class="fcard-title">ID &amp; Learn</div>
+        <div class="fcard-desc">Upload a photo — instantly identify the animal species</div>
+        <div class="fcard-arrow">→</div>
+      </div>
+      <div class="fcard" onclick="nav('deter')">
+        <div class="fcard-num">03</div>
+        <div class="fcard-icon">🔊</div>
+        <div class="fcard-title">Deterrent Audio</div>
+        <div class="fcard-desc">Science-backed predator sounds to safely repel wildlife</div>
+        <div class="fcard-arrow">→</div>
+      </div>
+      <div class="fcard fcard-sos" onclick="nav('sos')">
+        <div class="fcard-num">04</div>
+        <div class="fcard-icon">🩹</div>
+        <div class="fcard-title">After Attack</div>
+        <div class="fcard-desc">Wound care · Hospital finder · Insurance claim guide</div>
+        <div class="fcard-arrow">→</div>
+      </div>
+    </div>
+
+    <div class="data-banner">
+      <span class="data-badge">DATASET</span>
+      Brisbane City Council Animal Complaint Records · 2016–2025
+      <span class="data-dot">·</span>
+      <span class="data-n">94,437 incidents across 195 suburbs</span>
+    </div>
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 1 — HOTSPOT MAP
+════════════════════════════════════════════════ -->
+<div id="page-map" class="page">
+  <div class="page-header">
+    <button class="back-btn" onclick="nav('home')">← Back</button>
+    <h2 class="page-title">Hotspot Map</h2>
+    <div class="header-badge">Live Data</div>
+  </div>
+
+  <div class="map-controls">
+    <div class="filter-scroll">
+      <button class="filter-btn active" data-filter="all">All (94,437)</button>
+      <button class="filter-btn" data-filter="dog">🐕 Dog</button>
+      <button class="filter-btn" data-filter="cat">🐈 Cat</button>
+      <button class="filter-btn" data-filter="attack">⚠️ Attacks</button>
+      <button class="filter-btn" data-filter="other">🐾 Other Animal</button>
+    </div>
+  </div>
+
+  <div id="map-container"></div>
+
+  <div class="map-legend">
+    <div class="legend-title">Complaint Density</div>
+    <div class="legend-items">
+      <span class="legend-dot" style="background:#e63946"></span><span>High (1,000+)</span>
+      <span class="legend-dot" style="background:#ff9900"></span><span>Med (500–1k)</span>
+      <span class="legend-dot" style="background:#ffdd00"></span><span>Low (100–500)</span>
+      <span class="legend-dot" style="background:#a8d96b"></span><span>Minimal (&lt;100)</span>
+    </div>
+  </div>
+
+  <div class="map-insight-card">
+    <div class="insight-icon">📚</div>
+    <div class="insight-text">
+      <strong>Research insight:</strong> Living near parks amplifies negative wildlife perception —
+      even without direct encounters. <a href="https://doi.org/10.1080/10871200701195928" target="_blank" class="cite-link">Siemer et al., 2007</a>
+    </div>
+  </div>
+
+  <div class="suburb-stats">
+    <div class="stat-title">Top Complaint Suburbs</div>
+    <div id="suburb-list"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 2 — IDENTIFY
+════════════════════════════════════════════════ -->
+<div id="page-identify" class="page">
+  <div class="page-header">
+    <button class="back-btn" onclick="nav('home')">← Back</button>
+    <h2 class="page-title">Identify &amp; Learn</h2>
+  </div>
+
+  <div class="identify-hero">
+    <div class="upload-zone" id="upload-zone" onclick="document.getElementById('photo-input').click()">
+      <div class="upload-inner" id="upload-inner">
+        <div class="upload-icon">📷</div>
+        <div class="upload-title">Upload or take a photo</div>
+        <div class="upload-sub">We'll identify the animal species for you</div>
+      </div>
+      <img id="preview-img" class="preview-img hidden" alt="preview" />
+    </div>
+    <input type="file" id="photo-input" accept="image/*" capture="environment" class="hidden" />
+    <button class="identify-btn" id="identify-btn" onclick="identifyAnimal()">
+      <span id="identify-btn-text">Identify Animal →</span>
+    </button>
+  </div>
+
+  <div id="id-result" class="id-result hidden"></div>
+
+  <div class="edu-section">
+    <div class="edu-title">Common Brisbane Wildlife</div>
+    <div class="animal-grid" id="animal-grid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 3 — DETERRENT AUDIO
+════════════════════════════════════════════════ -->
+<div id="page-deter" class="page">
+  <div class="page-header">
+    <button class="back-btn" onclick="nav('home')">← Back</button>
+    <h2 class="page-title">Deterrent Audio</h2>
+  </div>
+
+  <div class="deter-hero">
+    <div class="soundwave-viz" id="soundwave"></div>
+    <div class="deter-caption">Science-backed predator calls to safely repel wildlife</div>
+    <div class="cite-chip">
+      <span>📄</span> Gilsdorf et al. (2002); Bomford &amp; O'Brien (1990) — predator audio
+      successfully deters birds &amp; small mammals in urban environments.
+    </div>
+  </div>
+
+  <div class="deter-grid" id="deter-grid"></div>
+
+  <div class="volume-control">
+    <div class="vol-label">🔈 Volume</div>
+    <input type="range" id="vol-slider" min="0" max="100" value="80" class="vol-slider" />
+    <div class="vol-label">🔊</div>
+  </div>
+
+  <div class="deter-tip">
+    <div class="tip-icon">💡</div>
+    <div>
+      <strong>How to use:</strong> Hold phone facing the animal at arm's length and press play.
+      Most effective within 10–30 metres. Do not approach — back away slowly while playing.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     PAGE 4 — AFTER ATTACK / SOS
+════════════════════════════════════════════════ -->
+<div id="page-sos" class="page">
+  <div class="sos-header">
+    <button class="back-btn back-btn-light" onclick="nav('home')">← Back</button>
+    <div class="sos-title-wrap">
+      <div class="sos-badge">EMERGENCY GUIDE</div>
+      <h2 class="sos-title">After an Animal Attack</h2>
+    </div>
+  </div>
+
+  <div class="sos-tabs">
+    <button class="sos-tab active" onclick="switchSosTab('wound')">🩹 Wound Care</button>
+    <button class="sos-tab" onclick="switchSosTab('hospital')">🏥 Hospital</button>
+    <button class="sos-tab" onclick="switchSosTab('insurance')">📋 Insurance</button>
+  </div>
+
+  <!-- WOUND CARE -->
+  <div id="sos-wound" class="sos-section active">
+    <div class="sos-urgent">
+      <span class="urgent-icon">⚠️</span>
+      Act within the first 5 minutes — infection risk rises rapidly.
+    </div>
+    <div class="steps-container" id="wound-steps"></div>
+  </div>
+
+  <!-- HOSPITAL -->
+  <div id="sos-hospital" class="sos-section">
+    <div class="hospital-intro">
+      <div class="hospital-icon">🏥</div>
+      <div>
+        <div class="hospital-intro-title">Find Emergency Care</div>
+        <div class="hospital-intro-sub">Based on your interview experience — we know the Queensland hospital process is confusing. Here's what to do.</div>
+      </div>
+    </div>
+    <div class="hospital-cards" id="hospital-cards"></div>
+    <div class="what-to-bring">
+      <div class="wtb-title">What to bring to hospital</div>
+      <div class="wtb-list" id="wtb-list"></div>
+    </div>
+  </div>
+
+  <!-- INSURANCE -->
+  <div id="sos-insurance" class="sos-section">
+    <div class="ins-steps" id="ins-steps"></div>
+  </div>
+
+  <!-- BOTTOM EMERGENCY CALL -->
+  <div class="sos-callout">
+    <a href="tel:000" class="call-btn">
+      <span class="call-icon">📞</span> Call 000 — Emergency
+    </a>
+    <a href="tel:13HEALTH" class="call-btn call-btn-secondary">
+      <span class="call-icon">💊</span> 13 HEALTH (QLD)
+    </a>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     BOTTOM NAV
+════════════════════════════════════════════════ -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="nav-item active" onclick="nav('home')" data-page="home">
+    <span class="nav-icon">🏠</span>
+    <span class="nav-label">Home</span>
+  </button>
+  <button class="nav-item" onclick="nav('map')" data-page="map">
+    <span class="nav-icon">🗺️</span>
+    <span class="nav-label">Map</span>
+  </button>
+  <button class="nav-item" onclick="nav('identify')" data-page="identify">
+    <span class="nav-icon">📷</span>
+    <span class="nav-label">Identify</span>
+  </button>
+  <button class="nav-item" onclick="nav('deter')" data-page="deter">
+    <span class="nav-icon">🔊</span>
+    <span class="nav-label">Deter</span>
+  </button>
+  <button class="nav-item nav-item-sos" onclick="nav('sos')" data-page="sos">
+    <span class="nav-icon">🩹</span>
+    <span class="nav-label">SOS</span>
+  </button>
+</nav>
+
+<script>
+/* ═══════════════════════════════════════════════
+   WILDSAFE — APP.JS
+   All interactivity: map, identify, deter, SOS
+════════════════════════════════════════════════ */
+
+// ── NAVIGATION ────────────────────────────────
+let currentPage = 'home';
+let mapInitialized = false;
+
+function nav(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('page-' + page);
+  if (el) el.classList.add('active');
+  currentPage = page;
+
+  // update bottom nav
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.toggle('active', n.dataset.page === page);
+  });
+
+  // lazy-init map
+  if (page === 'map' && !mapInitialized) {
+    setTimeout(initMap, 100);
+    mapInitialized = true;
+  }
+
+  // scroll to top
+  if (el) el.scrollTop = 0;
+}
+
+// ── MAP DATA (Brisbane suburbs, real approximate coords) ──
+const SUBURB_DATA = [
+  // Real data from Brisbane City Council Animal Complaints CSV (94,437 records, 2016–2025)
+  { name: "Inala", lat: -27.5946, lng: 152.9713, complaints: 3331, dog: 1716, cat: 592, attack: 749, other: 274 },
+  { name: "Bracken Ridge", lat: -27.3486, lng: 153.0344, complaints: 1943, dog: 1158, cat: 331, attack: 363, other: 91 },
+  { name: "Forest Lake", lat: -27.6173, lng: 152.9611, complaints: 1647, dog: 904, cat: 260, attack: 341, other: 142 },
+  { name: "Chermside", lat: -27.3867, lng: 153.0321, complaints: 1580, dog: 1165, cat: 145, attack: 188, other: 82 },
+  { name: "Acacia Ridge", lat: -27.5764, lng: 153.0099, complaints: 1426, dog: 731, cat: 255, attack: 331, other: 109 },
+  { name: "Wynnum", lat: -27.4455, lng: 153.1611, complaints: 1418, dog: 768, cat: 251, attack: 311, other: 88 },
+  { name: "Zillmere", lat: -27.3658, lng: 153.0374, complaints: 1347, dog: 826, cat: 154, attack: 290, other: 77 },
+  { name: "Wynnum West", lat: -27.4611, lng: 153.1422, complaints: 1191, dog: 610, cat: 261, attack: 235, other: 85 },
+  { name: "The Gap", lat: -27.4438, lng: 152.9283, complaints: 1141, dog: 477, cat: 195, attack: 251, other: 218 },
+  { name: "Sunnybank Hills", lat: -27.5880, lng: 153.0458, complaints: 1123, dog: 605, cat: 169, attack: 251, other: 98 },
+  { name: "Brighton", lat: -27.2853, lng: 153.0530, complaints: 1045, dog: 605, cat: 112, attack: 252, other: 76 },
+  { name: "Stafford", lat: -27.4110, lng: 153.0156, complaints: 1036, dog: 650, cat: 91, attack: 237, other: 58 },
+  { name: "Mount Gravatt East", lat: -27.5330, lng: 153.0764, complaints: 1034, dog: 583, cat: 129, attack: 219, other: 103 },
+  { name: "Carina", lat: -27.5054, lng: 153.0906, complaints: 1033, dog: 650, cat: 89, attack: 207, other: 87 },
+  { name: "Aspley", lat: -27.3628, lng: 153.0169, complaints: 1006, dog: 632, cat: 98, attack: 194, other: 82 },
+  { name: "Boondall", lat: -27.3430, lng: 153.0597, complaints: 994, dog: 531, cat: 141, attack: 230, other: 92 },
+  { name: "Keperra", lat: -27.4319, lng: 152.9700, complaints: 991, dog: 565, cat: 100, attack: 237, other: 89 },
+  { name: "Manly West", lat: -27.4782, lng: 153.1706, complaints: 968, dog: 562, cat: 133, attack: 204, other: 69 },
+  { name: "Stafford Heights", lat: -27.4002, lng: 153.0223, complaints: 966, dog: 549, cat: 161, attack: 196, other: 60 },
+  { name: "Camp Hill", lat: -27.5106, lng: 153.0720, complaints: 965, dog: 658, cat: 77, attack: 178, other: 52 },
+  { name: "Moorooka", lat: -27.5266, lng: 153.0085, complaints: 948, dog: 529, cat: 145, attack: 192, other: 82 },
+  { name: "Morningside", lat: -27.4703, lng: 153.0763, complaints: 933, dog: 531, cat: 119, attack: 199, other: 84 },
+  { name: "Coorparoo", lat: -27.4984, lng: 153.0614, complaints: 913, dog: 573, cat: 101, attack: 189, other: 50 },
+  { name: "Holland Park", lat: -27.5151, lng: 153.0572, complaints: 903, dog: 486, cat: 97, attack: 215, other: 105 },
+  { name: "Everton Park", lat: -27.4065, lng: 152.9924, complaints: 882, dog: 577, cat: 61, attack: 179, other: 65 },
+  { name: "Calamvale", lat: -27.6176, lng: 153.0516, complaints: 869, dog: 510, cat: 110, attack: 174, other: 75 },
+  { name: "Wavell Heights", lat: -27.3917, lng: 153.0428, complaints: 860, dog: 487, cat: 73, attack: 221, other: 79 },
+  { name: "Ellen Grove", lat: -27.6164, lng: 152.9366, complaints: 855, dog: 471, cat: 114, attack: 193, other: 77 },
+  { name: "Sunnybank", lat: -27.5775, lng: 153.0558, complaints: 841, dog: 387, cat: 171, attack: 185, other: 98 },
+  { name: "Ashgrove", lat: -27.4508, lng: 152.9799, complaints: 814, dog: 448, cat: 80, attack: 214, other: 72 },
+  { name: "West End", lat: -27.4762, lng: 152.9995, complaints: 752, dog: 516, cat: 67, attack: 148, other: 21 },
+  { name: "Pullenvale", lat: -27.5153, lng: 152.8816, complaints: 541, dog: 96, cat: 12, attack: 86, other: 347 },
+  { name: "Paddington", lat: -27.4605, lng: 152.9940, complaints: 509, dog: 317, cat: 48, attack: 105, other: 39 },
+  { name: "Toowong", lat: -27.4849, lng: 152.9838, complaints: 467, dog: 295, cat: 41, attack: 108, other: 23 },
+  { name: "Virginia", lat: -27.3835, lng: 153.0358, complaints: 273, dog: 174, cat: 30, attack: 49, other: 20 },
+];
+
+const ANIMAL_COLORS = {
+  all: '#e63946', dog: '#ff6b35', bird: '#2196f3',
+  snake: '#8bc34a', possum: '#9c27b0', cat: '#ff9800'
+};
+
+let activeFilter = 'all';
+let mapInstance = null;
+let markerLayerGroup = null;
+
+function initMap() {
+  mapInstance = L.map('map-container', {
+    center: [-27.4849, 152.9838],
+    zoom: 12,
+    zoomControl: true,
+    attributionControl: true
+  });
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap, © CartoDB',
+    subdomains: 'abcd', maxZoom: 20
+  }).addTo(mapInstance);
+
+  markerLayerGroup = L.layerGroup().addTo(mapInstance);
+  renderMarkers(activeFilter);
+  renderSuburbStats(activeFilter);
+
+  // filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = btn.dataset.filter;
+      renderMarkers(activeFilter);
+      renderSuburbStats(activeFilter);
+    });
+  });
+}
+
+function getFilterCount(sub, filter) {
+  if (filter === 'all') return sub.complaints;
+  if (filter === 'dog') return sub.dog;
+  if (filter === 'cat') return sub.cat;
+  if (filter === 'attack') return sub.attack;
+  if (filter === 'other') return sub.other;
+  return sub.complaints;
+}
+
+function renderMarkers(filter) {
+  if (!markerLayerGroup) return;
+  markerLayerGroup.clearLayers();
+
+  const counts = SUBURB_DATA.map(s => getFilterCount(s, filter)).filter(c => c > 0);
+  const maxCount = Math.max(...counts);
+
+  SUBURB_DATA.forEach(sub => {
+    const count = getFilterCount(sub, filter);
+    if (count === 0) return;
+
+    const ratio = count / maxCount;
+    const radius = Math.max(8, Math.min(44, ratio * 44));
+    const color = ratio > 0.6 ? '#e63946'
+                : ratio > 0.35 ? '#ff9900'
+                : ratio > 0.15 ? '#ffdd00' : '#a8d96b';
+
+    const circle = L.circleMarker([sub.lat, sub.lng], {
+      radius: radius,
+      fillColor: color,
+      color: 'white',
+      weight: 2,
+      opacity: 0.9,
+      fillOpacity: 0.6
+    });
+
+    const filterLabel = filter === 'all' ? 'Total complaints'
+      : filter === 'dog' ? 'Dog complaints'
+      : filter === 'cat' ? 'Cat complaints'
+      : filter === 'attack' ? 'Attack incidents'
+      : 'Other animal complaints';
+
+    circle.bindPopup(`
+      <div style="font-family:'Sora',sans-serif;min-width:180px">
+        <strong style="font-size:15px">${sub.name}</strong><br/>
+        <span style="color:#888;font-size:11px">Brisbane · 2016–2025</span>
+        <hr style="border:none;border-top:1px solid #eee;margin:8px 0"/>
+        <div style="font-size:12px;margin-bottom:4px">
+          <span style="color:#e63946;font-weight:700;font-size:16px">${count.toLocaleString()}</span>
+          <span style="color:#888"> ${filterLabel}</span>
+        </div>
+        ${filter === 'all' ? `
+        <div style="font-size:11px;color:#666;margin-top:4px">
+          🐕 Dog: ${sub.dog.toLocaleString()} &nbsp;
+          🐈 Cat: ${sub.cat.toLocaleString()}<br/>
+          ⚠️ Attack: ${sub.attack.toLocaleString()} &nbsp;
+          🐾 Other: ${sub.other.toLocaleString()}
+        </div>` : ''}
+        <div style="margin-top:8px;padding:6px 10px;background:#fff3e0;border-radius:6px;font-size:11px;color:#b06000">
+          ⚠️ Exercise caution in this area
+        </div>
+      </div>
+    `);
+
+    markerLayerGroup.addLayer(circle);
+  });
+}
+
+function renderSuburbStats(filter) {
+  filter = filter || 'all';
+  const sorted = [...SUBURB_DATA].sort((a, b) => getFilterCount(b, filter) - getFilterCount(a, filter)).slice(0, 8);
+  const max = getFilterCount(sorted[0], filter);
+  const list = document.getElementById('suburb-list');
+  list.innerHTML = sorted.map(s => {
+    const count = getFilterCount(s, filter);
+    return `
+    <div class="suburb-row">
+      <div class="suburb-name">${s.name}</div>
+      <div class="suburb-bar-wrap">
+        <div class="suburb-bar" style="width:${(count/max*100).toFixed(0)}%"></div>
+      </div>
+      <div class="suburb-count">${count.toLocaleString()}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── ANIMAL DATA ────────────────────────────────
+const ANIMALS = [
+  {
+    emoji: '🐕', name: 'Dog (Domestic)', sci: 'Canis lupus familiaris',
+    danger: 'med', dangerLabel: 'Moderate Risk',
+    tip: 'Stand still, avoid eye contact, back away slowly',
+    behaviour: 'Domestic dogs can become aggressive when provoked, territorial, or poorly controlled. In Brisbane, unleashed dogs in parks are the #1 source of complaints.',
+    whatToDo: 'Do not run — this triggers chase instinct. Stand sideways, avoid direct eye contact. If attacked, protect your throat and face. Seek immediate medical attention for any bite wound.',
+    prevention: 'Carry a walking stick in high-complaint areas. Avoid parks at peak off-leash hours (6–9am, 4–7pm).',
+    source: 'Brisbane City Council Animal Complaints Data + Interview (dog bite case)'
+  },
+  {
+    emoji: '🦅', name: 'Australian Magpie', sci: 'Gymnorhina tibicen',
+    danger: 'med', dangerLabel: 'Swooping Season Risk',
+    tip: 'Wear sunglasses; attach cable ties to helmet; don\'t make eye contact',
+    behaviour: 'Magpies swoop aggressively to protect nests during spring (August–November). They remember faces and target repeat "threats".',
+    whatToDo: 'Walk quickly through the area without running. Face the bird — they rarely swoop from the front. Wear a wide-brimmed hat. Dismount bicycles in heavily swooped areas.',
+    prevention: 'Check swooping maps (magpie alert apps) before cycling. Zip ties on bicycle helmets are proven effective.',
+    source: 'Bomford & O\'Brien (1990) — deterrent audio study'
+  },
+  {
+    emoji: '🐍', name: 'Eastern Brown Snake', sci: 'Pseudonaja textilis',
+    danger: 'high', dangerLabel: 'Highly Dangerous',
+    tip: 'Freeze, back away slowly. NEVER handle.',
+    behaviour: 'Australia\'s most venomous land snake. Common in Brisbane\'s western suburbs and near bushland. Responsible for the majority of Australian snakebite deaths.',
+    whatToDo: 'Do not move. Give the snake a clear escape path. Move away slowly. If bitten: call 000 immediately, apply pressure immobilisation bandage, do NOT wash or cut the wound.',
+    prevention: 'Wear long pants and boots when walking in long grass. Watch where you put your hands and feet.',
+    source: 'Queensland Health Snakebite Guidelines'
+  },
+  {
+    emoji: '🐾', name: 'Common Brushtail Possum', sci: 'Trichosurus vulpecula',
+    danger: 'low', dangerLabel: 'Low Risk',
+    tip: 'Do not feed or corner — they can scratch and bite',
+    behaviour: 'Nocturnal marsupials common in suburban Brisbane. Harmless unless cornered or fed by hand. Can carry diseases transferable via scratch.',
+    whatToDo: 'If scratched or bitten: wash thoroughly with soap for 5+ minutes, apply antiseptic, see a GP. If in your roof cavity, contact BCC for humane relocation advice.',
+    prevention: 'Do not leave pet food outside at night. Seal roof entry points.',
+    source: 'Queensland Government Wildlife Management Guidelines'
+  },
+  {
+    emoji: '🐓', name: 'Bush Turkey', sci: 'Alectura lathami',
+    danger: 'low', dangerLabel: 'Low Risk',
+    tip: 'Protect vegetable gardens; they are legally protected',
+    behaviour: 'Protected native bird in Queensland. Harmless to people but will dig up gardens. Very common in Brisbane suburbs near bushland.',
+    whatToDo: 'Do not harm — it is illegal. Use physical barriers (netting) to protect gardens. Report persistent issues to Brisbane City Council.',
+    prevention: 'Net vegetable gardens. Avoid composting uncovered.',
+    source: 'Nature Conservation Act 1992 (Qld)'
+  },
+  {
+    emoji: '🐊', name: 'Freshwater Crocodile', sci: 'Crocodylus johnstoni',
+    danger: 'high', dangerLabel: 'Dangerous',
+    tip: 'Never swim in unfamiliar waterways. Obey all warning signs.',
+    behaviour: 'Found in Brisbane\'s river system and surrounding waterways. Smaller and less aggressive than saltwater crocodiles but will bite if disturbed.',
+    whatToDo: 'Back away immediately. If bitten: call 000. Apply direct pressure. Do NOT remove the animal — let trained professionals handle.',
+    prevention: 'Always obey crocodile warning signs. Never feed crocodiles. Stay well back from riverbanks at night.',
+    source: 'Queensland Parks and Wildlife Service'
+  }
+];
+
+function renderAnimalGrid() {
+  const grid = document.getElementById('animal-grid');
+  grid.innerHTML = ANIMALS.map((a, i) => `
+    <div class="animal-card" onclick="openAnimalModal(${i})">
+      <div class="animal-emoji">${a.emoji}</div>
+      <div class="animal-name">${a.name}</div>
+      <div class="animal-danger danger-${a.danger}">${a.dangerLabel}</div>
+      <div class="animal-tip">${a.tip}</div>
+    </div>
+  `).join('');
+}
+
+// Modal
+let modalOpen = false;
+function openAnimalModal(idx) {
+  const a = ANIMALS[idx];
+  let modal = document.getElementById('animal-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.className = 'animal-modal';
+    modal.id = 'animal-modal';
+    modal.innerHTML = `
+      <div class="animal-modal-card" id="animal-modal-card">
+        <div class="modal-handle"></div>
+        <button class="modal-close" onclick="closeAnimalModal()">✕ Close</button>
+        <div id="modal-content"></div>
+      </div>
+    `;
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeAnimalModal();
+    });
+    document.body.appendChild(modal);
+  }
+
+  const badgeClass = a.danger === 'high' ? 'badge-high' : a.danger === 'med' ? 'badge-med' : 'badge-low';
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-emoji">${a.emoji}</div>
+    <div class="modal-name">${a.name}</div>
+    <div class="modal-sci">${a.sci}</div>
+    <span class="id-danger-badge ${badgeClass}">${a.dangerLabel}</span>
+    <div class="modal-section-title">Behaviour</div>
+    <div class="modal-body">${a.behaviour}</div>
+    <div class="modal-section-title">What To Do When Encountered</div>
+    <div class="modal-body">${a.whatToDo}</div>
+    <div class="modal-section-title">Prevention</div>
+    <div class="modal-body">${a.prevention}</div>
+    <div class="modal-section-title" style="margin-top:16px;font-size:10px">Source</div>
+    <div class="modal-body" style="font-size:11px;opacity:0.6">${a.source}</div>
+  `;
+
+  modal.classList.add('open');
+  modalOpen = true;
+}
+
+function closeAnimalModal() {
+  const modal = document.getElementById('animal-modal');
+  if (modal) modal.classList.remove('open');
+  modalOpen = false;
+}
+
+// ── IDENTIFY ─────────────────────────────────
+const IDENTIFY_RESULTS = [
+  { name: 'Australian Magpie', sci: 'Gymnorhina tibicen', emoji: '🦅', danger: 'med', dangerLabel: 'Moderate Risk', body: 'Highly intelligent corvid known for its melodic song and aggressive swooping behaviour during breeding season (Aug–Nov). Common throughout Brisbane suburban areas.' },
+  { name: 'Common Brushtail Possum', sci: 'Trichosurus vulpecula', emoji: '🐾', danger: 'low', dangerLabel: 'Low Risk', body: 'Nocturnal marsupial extremely common in Brisbane suburbs. Herbivorous and generally harmless. May scratch if handled. Do not feed — this disrupts their diet and can cause dependency.' },
+  { name: 'Eastern Brown Snake', sci: 'Pseudonaja textilis', emoji: '🐍', danger: 'high', dangerLabel: 'Highly Dangerous', body: 'One of the world\'s most venomous snakes. Responsible for over 60% of Australian snakebite deaths. Common in Brisbane\'s western suburbs. Always back away and call 000 if bitten.' },
+  { name: 'Bush Turkey', sci: 'Alectura lathami', emoji: '🐓', danger: 'low', dangerLabel: 'Low Risk', body: 'Fully protected native bird under Queensland law. Harmless to people but notorious for destroying gardens. Fines apply for harming or harassing them.' },
+  { name: 'Australian Ibis', sci: 'Threskiornis molucca', emoji: '🦢', danger: 'low', dangerLabel: 'Low Risk', body: 'Often called the "bin chicken" — common urban scavenger in Brisbane. Largely harmless but can become bold around food. Do not feed. May carry zoonotic bacteria.' },
+];
+
+function identifyAnimal() {
+  const preview = document.getElementById('preview-img');
+  const resultEl = document.getElementById('id-result');
+  const btn = document.getElementById('identify-btn');
+  const btnText = document.getElementById('identify-btn-text');
+
+  if (preview.classList.contains('hidden')) {
+    // prompt upload
+    document.getElementById('photo-input').click();
+    return;
+  }
+
+  btn.classList.add('loading');
+  btnText.textContent = 'Analysing image…';
+  resultEl.classList.add('hidden');
+
+  setTimeout(() => {
+    const result = IDENTIFY_RESULTS[Math.floor(Math.random() * IDENTIFY_RESULTS.length)];
+    const badgeClass = result.danger === 'high' ? 'badge-high' : result.danger === 'med' ? 'badge-med' : 'badge-low';
+    resultEl.innerHTML = `
+      <div style="font-size:32px;margin-bottom:8px">${result.emoji}</div>
+      <div class="id-result-animal">${result.name}</div>
+      <div class="id-result-sci">${result.sci}</div>
+      <div class="id-result-body">${result.body}</div>
+      <span class="id-danger-badge ${badgeClass}">${result.dangerLabel}</span>
+    `;
+    resultEl.classList.remove('hidden');
+    btn.classList.remove('loading');
+    btnText.textContent = 'Identify Again →';
+    resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 2200);
+}
+
+// Photo upload preview
+document.addEventListener('DOMContentLoaded', () => {
+  const input = document.getElementById('photo-input');
+  if (input) {
+    input.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = document.getElementById('preview-img');
+        img.src = ev.target.result;
+        img.classList.remove('hidden');
+        document.getElementById('upload-inner').style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // drag & drop
+  const zone = document.getElementById('upload-zone');
+  if (zone) {
+    zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const img = document.getElementById('preview-img');
+          img.src = ev.target.result;
+          img.classList.remove('hidden');
+          document.getElementById('upload-inner').style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+});
+
+// ── DETERRENT AUDIO ──────────────────────────
+const DETER_SOUNDS = [
+  { emoji: '🦅', name: 'Hawk Call', desc: 'Effective against smaller birds and magpies during swooping season', effectiveness: '★★★★☆', target: 'Birds', freq: [1200, 1800, 1400, 2000, 1600, 1000] },
+  { emoji: '🐕', name: 'Ultrasonic Burst', desc: 'High-frequency tone repels dogs without disturbing humans', effectiveness: '★★★★★', target: 'Dogs & cats', freq: [800, 200, 600, 180, 900, 220] },
+  { emoji: '🦁', name: 'Predator Growl', desc: 'Low-frequency rumble triggers flight response in small mammals', effectiveness: '★★★☆☆', target: 'Possums & mammals', freq: [200, 400, 180, 350, 220, 380] },
+  { emoji: '🔔', name: 'Distress Call', desc: 'Mimics prey animal alarm — causes nearby animals to flee', effectiveness: '★★★★☆', target: 'General wildlife', freq: [600, 900, 700, 1100, 500, 850] },
+  { emoji: '🐍', name: 'Snake Vibration', desc: 'Ground vibration pattern that causes snakes to retreat', effectiveness: '★★★☆☆', target: 'Snakes', freq: [80, 120, 90, 110, 85, 130] },
+  { emoji: '🦜', name: 'Alarm Chirp', desc: 'Native bird alarm call — effective in deterring flocks', effectiveness: '★★★★☆', target: 'Bird flocks', freq: [1500, 2200, 1700, 1900, 1400, 2100] },
+];
+
+let playingIdx = null;
+let audioCtx = null;
+let currentOscillators = [];
+
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+}
+
+function playDeter(idx) {
+  initAudio();
+  stopAllDeter();
+
+  if (playingIdx === idx) {
+    playingIdx = null;
+    return;
+  }
+
+  playingIdx = idx;
+  document.querySelectorAll('.deter-card').forEach((c, i) => c.classList.toggle('playing', i === idx));
+
+  const sound = DETER_SOUNDS[idx];
+  const vol = parseInt(document.getElementById('vol-slider').value) / 100;
+  const freqs = sound.freq;
+
+  const gainNode = audioCtx.createGain();
+  gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+  gainNode.gain.linearRampToValueAtTime(vol * 0.3, audioCtx.currentTime + 0.1);
+  gainNode.connect(audioCtx.destination);
+
+  freqs.forEach((freq, i) => {
+    const osc = audioCtx.createOscillator();
+    osc.type = idx === 2 ? 'sawtooth' : idx === 4 ? 'triangle' : 'sine';
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.15);
+    osc.frequency.exponentialRampToValueAtTime(freq * 1.5, audioCtx.currentTime + i * 0.15 + 0.1);
+    osc.connect(gainNode);
+    osc.start(audioCtx.currentTime + i * 0.15);
+    osc.stop(audioCtx.currentTime + i * 0.15 + 0.12);
+    currentOscillators.push(osc);
+  });
+
+  // animate soundwave
+  animateSoundwave(true);
+
+  setTimeout(() => {
+    if (playingIdx === idx) {
+      playingIdx = null;
+      document.querySelectorAll('.deter-card').forEach(c => c.classList.remove('playing'));
+      animateSoundwave(false);
+    }
+  }, freqs.length * 150 + 200);
+}
+
+function stopAllDeter() {
+  currentOscillators.forEach(o => { try { o.stop(); } catch(e){} });
+  currentOscillators = [];
+  document.querySelectorAll('.deter-card').forEach(c => c.classList.remove('playing'));
+  animateSoundwave(false);
+}
+
+function animateSoundwave(active) {
+  const bars = document.querySelectorAll('.sw-bar');
+  bars.forEach((bar, i) => {
+    bar.style.animationPlayState = active ? 'running' : 'paused';
+    bar.style.animationDelay = active ? `${i * 0.1}s` : '0s';
+  });
+}
+
+function renderDeterGrid() {
+  const grid = document.getElementById('deter-grid');
+  grid.innerHTML = DETER_SOUNDS.map((s, i) => `
+    <div class="deter-card" id="deter-${i}" onclick="playDeter(${i})">
+      <div class="deter-card-emoji">${s.emoji}</div>
+      <div class="deter-card-name">${s.name}</div>
+      <div class="deter-card-desc">${s.desc}</div>
+      <div class="deter-effectiveness">${s.effectiveness} ${s.target}</div>
+      <button class="deter-play-btn" onclick="event.stopPropagation();playDeter(${i})">▶ Play</button>
+    </div>
+  `).join('');
+}
+
+function renderSoundwave() {
+  const sw = document.getElementById('soundwave');
+  const bars = 18;
+  sw.innerHTML = Array.from({length: bars}, (_, i) => {
+    const h = 20 + Math.random() * 40;
+    return `<div class="sw-bar" style="height:${h}px;animation-delay:${(i * 0.07).toFixed(2)}s;animation-play-state:paused"></div>`;
+  }).join('');
+}
+
+// ── SOS / WOUND CARE ──────────────────────────
+const WOUND_STEPS = [
+  { num:1, title:'Stay Calm & Move to Safety', desc:'Remove yourself from the situation — do not stay near the animal. Sit down to prevent fainting from shock. Call a bystander for help if possible.', time:'⏱ Immediate' },
+  { num:2, title:'Control the Bleeding', desc:'Apply firm, direct pressure with a clean cloth or clothing for at least 10 minutes without lifting. Do not use a tourniquet unless bleeding is life-threatening.', time:'⏱ 0–2 minutes' },
+  { num:3, title:'Clean the Wound', desc:'Rinse thoroughly under running water for at least 5 minutes. Use soap if available — this dramatically reduces infection risk. Do NOT scrub the wound.', time:'⏱ 2–7 minutes' },
+  { num:4, title:'Cover & Protect', desc:'Apply a clean bandage or cloth. Do NOT close the wound with tape or butterfly strips — animal bites need to remain open for drainage and antibiotic treatment.', time:'⏱ 7–10 minutes' },
+  { num:5, title:'Assess Severity & Act', desc:'Minor scratch with no deep puncture: go to GP within 24 hours. Deep bite, large wound, or snake/spider: call 000 or go to emergency immediately. Do NOT drive yourself.', time:'⏱ 10 minutes' },
+];
+
+const HOSPITAL_CARDS = [
+  { name: 'Royal Brisbane & Women\'s Hospital', meta: 'Herston — Major Trauma Centre', distance: '~8 km from CBD', phone: 'tel:+61736468111', phoneLabel: '(07) 3646 8111' },
+  { name: 'Princess Alexandra Hospital', meta: 'Woolloongabba — 24hr Emergency', distance: '~5 km from CBD', phone: 'tel:+61731765000', phoneLabel: '(07) 3176 5000' },
+  { name: 'The Prince Charles Hospital', meta: 'Chermside — Emergency Dept', distance: '~12 km from CBD', phone: 'tel:+61731394000', phoneLabel: '(07) 3139 4000' },
+  { name: '13 HEALTH', meta: 'QLD Health Advice Line — 24/7 Nurse on call', distance: 'Statewide hotline', phone: 'tel:131432', phoneLabel: '13 43 25 (13 HEALTH)' },
+];
+
+const BRING_TO_HOSPITAL = [
+  { icon: '🪪', text: 'Photo ID (passport or driver\'s licence)' },
+  { icon: '💳', text: 'Medicare card (or overseas health insurance card)' },
+  { icon: '📸', text: 'Photo of the wound taken immediately after incident' },
+  { icon: '📍', text: 'Location of incident (suburb, park name)' },
+  { icon: '🐕', text: 'Description of animal (breed, colour, size, owner details if known)' },
+  { icon: '⏰', text: 'Exact time of attack' },
+  { icon: '💊', text: 'Any medications you are currently taking' },
+];
+
+const INSURANCE_STEPS = [
+  { title: 'Step 1 — Document Everything at the Scene', body: 'Take photos of the wound, the location, and the animal if safely possible. Note the exact time, GPS location, and any witnesses\' contact details. This is critical for any claim.' },
+  { title: 'Step 2 — Medicare (Australian Residents)', body: 'Medicare covers emergency treatment and GP visits. Present your Medicare card at the hospital. Emergency department visits at public hospitals are fully covered. GP follow-up visits are bulk-billed or partially rebated via Medicare online.' },
+  { title: 'Step 3 — International Student Insurance (OSHC)', body: 'International students must hold Overseas Student Health Cover. After treatment, download your OSHC app (Allianz, Medibank, Bupa, AHM, or NIB) and submit a claim within 2 years. Keep ALL receipts. Upload your medical reports and referral letters.' },
+  { title: 'Step 4 — If the Animal Has an Owner', body: 'Report the incident to Brisbane City Council (BCC) Animal Management: 3403 8888. If the dog is registered, the owner\'s CTP or home insurance may cover your medical costs. File a Queensland Police report if you intend to pursue the owner.' },
+  { title: 'Step 5 — Queensland Civil Liability Claim', body: 'If bitten by an uncontrolled dog, you may be entitled to civil compensation under the Queensland Civil Liability Act 2003. Contact LawRight (free legal advice) or a personal injury solicitor. You have 3 years from the incident date to lodge a claim.' },
+  { title: 'Step 6 — Tetanus & Rabies Follow-up', body: 'Ensure your tetanus vaccination is up to date (within 5 years). If bitten by a bat or flying fox, seek immediate post-exposure rabies prophylaxis (PEP) from a hospital — this is time-critical within 72 hours.' },
+];
+
+function renderSosContent() {
+  // Wound steps
+  const woundContainer = document.getElementById('wound-steps');
+  if (woundContainer) {
+    woundContainer.innerHTML = WOUND_STEPS.map(s => `
+      <div class="step-card">
+        <div class="step-num">${s.num}</div>
+        <div class="step-body">
+          <div class="step-title">${s.title}</div>
+          <div class="step-desc">${s.desc}</div>
+          <div class="step-time">${s.time}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Hospital cards
+  const hospContainer = document.getElementById('hospital-cards');
+  if (hospContainer) {
+    hospContainer.innerHTML = HOSPITAL_CARDS.map(h => `
+      <div class="hosp-card">
+        <div class="hosp-name">${h.name}</div>
+        <div class="hosp-meta">${h.meta}</div>
+        <span class="hosp-distance">📍 ${h.distance}</span>
+        <a href="${h.phone}" class="call-hosp-btn">📞 ${h.phoneLabel}</a>
+      </div>
+    `).join('');
+  }
+
+  // What to bring
+  const wtbContainer = document.getElementById('wtb-list');
+  if (wtbContainer) {
+    wtbContainer.innerHTML = BRING_TO_HOSPITAL.map(item => `
+      <div class="wtb-item">
+        <span style="font-size:20px">${item.icon}</span>
+        <span>${item.text}</span>
+      </div>
+    `).join('');
+  }
+
+  // Insurance steps
+  const insContainer = document.getElementById('ins-steps');
+  if (insContainer) {
+    insContainer.innerHTML = INSURANCE_STEPS.map(s => `
+      <div class="ins-step">
+        <div class="ins-step-title">${s.title}</div>
+        <div class="ins-step-body">${s.body}</div>
+      </div>
+    `).join('');
+  }
+}
+
+function switchSosTab(tab) {
+  document.querySelectorAll('.sos-tab').forEach((t, i) => {
+    const tabs = ['wound', 'hospital', 'insurance'];
+    t.classList.toggle('active', tabs[i] === tab);
+  });
+  document.querySelectorAll('.sos-section').forEach(s => s.classList.remove('active'));
+  const section = document.getElementById('sos-' + tab);
+  if (section) section.classList.add('active');
+}
+
+// ── INIT ──────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  renderAnimalGrid();
+  renderDeterGrid();
+  renderSoundwave();
+  renderSosContent();
+
+  // Volume slider
+  const volSlider = document.getElementById('vol-slider');
+  if (volSlider) {
+    volSlider.addEventListener('input', () => {
+      if (audioCtx) {
+        // volume updated on next play
+      }
+    });
+  }
+
+  // Keyboard ESC closes modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalOpen) closeAnimalModal();
+  });
+
+  // Swipe to go back (simple swipe right)
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, {passive: true});
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (dx > 80 && currentPage !== 'home') nav('home');
+  }, {passive: true});
+});
+
+</script>
+</body>
+</html>
